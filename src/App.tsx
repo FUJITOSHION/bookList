@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 
 import { BookToRead, BookDescription } from './Types'
@@ -44,9 +44,23 @@ const dummyBooks: BookToRead[] = [
   },
 ]
 
+const APP_KEY = 'react-book'
+
 export const App: React.FC = () => {
-  const [books, setBooks] = useState(dummyBooks)
+  const [books, setBooks] = useState<BookToRead[]>([] as BookToRead[])
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    const storedBooks = localStorage.getItem(APP_KEY)
+    if (storedBooks) {
+      setBooks(JSON.parse(storedBooks))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem(APP_KEY, JSON.stringify(books))
+  }, [books])
+
   const handleBookMemoChange = (id: number, memo: string) => {
     const newBooks = books.map((b) => {
       return b.id === id ? { ...b, memo: memo } : b
