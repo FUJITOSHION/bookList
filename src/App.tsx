@@ -1,26 +1,61 @@
-import React from 'react'
-import logo from './logo.svg'
+import React, { useState } from 'react'
 import './App.css'
+import { BookToRead } from './Types'
+import { BookRow } from './components/BookRow'
 
-function App() {
+const dummyBooks: BookToRead[] = [
+  {
+    id: 1,
+    title: 'はじめてのReact',
+    authors: 'ダミー',
+    memo: '',
+  },
+  {
+    id: 2,
+    title: 'React Hooks入門',
+    authors: 'ダミー',
+    memo: '',
+  },
+  {
+    id: 3,
+    title: '実践Reactアプリケーション開発',
+    authors: 'ダミー',
+    memo: '',
+  },
+]
+
+export const App: React.FC = () => {
+  const [books, setBooks] = useState(dummyBooks)
+  const handleBookMemoChange = (id: number, memo: string) => {
+    const newBooks = books.map((b) => {
+      return b.id === id ? { ...b, memo: memo } : b
+    })
+    setBooks(newBooks)
+  }
+
+  const handleBookDelete = (id: number) => {
+    const newBooks = books.filter((b) => b.id !== id)
+    setBooks(newBooks)
+  }
+
+  const bookRows = books.map((b) => {
+    return (
+      <BookRow
+        book={b}
+        key={b.id}
+        onMemoChange={handleBookMemoChange}
+        onDelete={handleBookDelete}
+      />
+    )
+  })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <section className="nav">
+        <h1>読みたい本リスト</h1>
+        <div className="button-like">本を追加</div>
+      </section>
+      <section className="main">{bookRows}</section>
     </div>
   )
 }
-
-export default App
